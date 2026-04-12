@@ -12,7 +12,7 @@ datasource db {
   provider = "postgresql"
 }
 
-model Users {
+model User {
   id String @id @default(cuid())
   email String @unique
   name String
@@ -34,7 +34,7 @@ model Product {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user Users @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([category])
