@@ -12,6 +12,11 @@ datasource db {
   provider = "postgresql"
 }
 
+enum Role {
+  USER
+  ADMIN
+}
+
 model User {
   id String @id @default(cuid())
   email String @unique
@@ -19,25 +24,9 @@ model User {
   password String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  products Product[]
+  role Role @default(USER)
 }
 
-model Product {
-  id String @id @default(cuid())
-  userId String
-  name String
-  description String?
-  price Decimal @db.Decimal(10, 2)
-  quantity Int
-  category String @db.VarChar(100)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-  @@index([category])
-}
 
 

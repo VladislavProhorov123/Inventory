@@ -5,7 +5,7 @@ import { IAuth } from "../validators/auth.validate";
 
 export const authService = {
   register: async (data: IAuth) => {
-    const { name, email, password } = data;
+    const { name, email, password, adminSecret} = data;
 
     if (!name || !email || !password) {
       throw new Error("Name, email and password are required");
@@ -13,16 +13,19 @@ export const authService = {
 
     const hashedPassword = await bcrypt.hash(password, 12);
 
+    const role = adminSecret === process.env.ADMIN_SECRET ? "ADMIN" : "USER"
+
     try {
       const user = await prisma.user.create({
         data: {
           name,
           email,
           password: hashedPassword,
+          role
         },
       });
 
-      const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET!, {
+      const token = jwt.sign({ userId: user.id, role: user.role }, process.env.JWT_SECRET!, {
         expiresIn: "7d",
       });
       return {
